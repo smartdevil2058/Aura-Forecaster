@@ -20,28 +20,28 @@ The system predicts daily **unit sales** for a given `(store_nbr, item_nbr, date
 Demand Forecasting/
 ├── app/
 │   ├── static/
-│   │   ├── app.js          # Frontend JS
-│   │   └── style.css       # Frontend styles
+│   │   ├── app.js          
+│   │   └── style.css       
 │   ├── templates/
-│   │   └── index.html      # Frontend entry page
-│   └── main.py              # FastAPI backend (API + static site)
+│   │   └── index.html      
+│   └── main.py              
 ├── Data/
-│   ├── data.csv              # Cleaned/merged dataset used by main.py & predict.py
-│   ├── featured_data.parquet # Feature-engineered dataset (from the training pipeline)
-│   ├── holidays_events.csv   # Raw: Ecuador holiday calendar
-│   ├── items.csv              # Raw: item metadata
-│   ├── oil.csv                 # Raw: daily WTI oil price
-│   ├── sample_submission.csv  # Raw: Kaggle-style submission template
-│   ├── stores.csv              # Raw: store metadata
-│   ├── test.csv                  # Raw: test split (no target)
-│   ├── train.csv                # Raw: full training data
-│   ├── train_red.csv           # Reduced/sampled version of train.csv
-│   └── transactions.csv       # Raw: daily per-store transaction counts
+│   ├── data.csv              
+│   ├── featured_data.parquet 
+│   ├── holidays_events.csv   
+│   ├── items.csv              
+│   ├── oil.csv                 
+│   ├── sample_submission.csv  
+│   ├── stores.csv              
+│   ├── test.csv                  
+│   ├── train.csv
+│   ├── train_red.csv
+│   └── transactions.csv       
 ├── model/
-│   └── Forecaster.pkl       # Trained sklearn/LightGBM pipeline
-├── notebooks/                 # EDA / feature engineering / model training notebooks
+│   └── Forecaster.pkl       
+├── notebooks/                 
 ├── script/
-│   └── predict.py             # Feature engineering + prediction logic (shared by API and CLI)
+│   └── predict.py
 ├── requirements.txt
 └── README.md
 ```
