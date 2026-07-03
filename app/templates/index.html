@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Aura Forecast is a state-of-the-art interactive machine learning dashboard for retail sales demand forecasting, utilizing historical trends, promotional variables, oil prices, and holiday events.">
+    <title>Aura Forecast - Demand Forecasting System</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <!-- App Container -->
+    <div class="app-container">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-logo">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="url(#logo-grad)" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                        <path d="M2 17L12 22L22 17" stroke="url(#logo-grad)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 12L12 17L22 12" stroke="url(#logo-grad)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <defs>
+                            <linearGradient id="logo-grad" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#00f2fe"/>
+                                <stop offset="1" stop-color="#4facfe"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <h1>AURA FORECAST</h1>
+            </div>
+            
+            <nav class="nav-menu">
+                <button class="nav-item active" id="btn-tab-overview" data-tab="tab-overview">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+                    <span>System Overview</span>
+                </button>
+                <button class="nav-item" id="btn-tab-predict" data-tab="tab-predict">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    <span>Single Forecast</span>
+                </button>
+                <button class="nav-item" id="btn-tab-trend" data-tab="tab-trend">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                    <span>Trend Analysis</span>
+                </button>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <button class="theme-toggle-btn" id="btn-theme-toggle" type="button">
+                    <svg class="sun-icon hide" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                    <svg class="moon-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    <span id="txt-theme-lbl">Light Theme</span>
+                </button>
+                <div class="status-indicator">
+                    <span class="pulse-dot"></span>
+                    <span id="txt-connection-status">Connecting to Backend...</span>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Main Content Area -->
+        <main class="main-content">
+            
+            <!-- System Loading Overlay -->
+            <div class="loader-overlay" id="loader-overlay">
+                <div class="spinner-container">
+                    <div class="spinner"></div>
+                    <h2>Loading Forecasting Data</h2>
+                    <p>Processing 1,000,000+ transaction rows and building indices...</p>
+                </div>
+            </div>
+            
+            <!-- Header -->
+            <header class="content-header">
+                <div>
+                    <h2 id="txt-header-title">System Overview</h2>
+                    <p id="txt-header-subtitle">Interactive machine learning dashboard for retail demand planning.</p>
+                </div>
+                <div class="header-actions">
+                    <div class="date-badge">
+                        <span id="txt-current-time">July 3, 2026</span>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- VIEW 1: Overview Tab -->
+            <section class="tab-pane active" id="tab-overview">
+                <div class="dashboard-grid">
+                    <!-- Quick Stats Cards -->
+                    <div class="stat-card">
+                        <div class="stat-icon icon-blue">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Store Coverage</h3>
+                            <div class="value" id="txt-stat-stores">54</div>
+                            <p>Unique supermarket stores</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon icon-purple">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Monitored Items</h3>
+                            <div class="value" id="txt-stat-items">1,228</div>
+                            <p>Unique product codes</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon icon-green">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Historical Span</h3>
+                            <div class="value" id="txt-stat-range">4.6 Years</div>
+                            <p id="txt-stat-dates">Jan 2013 - Aug 2017</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon icon-gold">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Oil Base Price</h3>
+                            <div class="value" id="txt-stat-oil">$48.15</div>
+                            <p>Median dcoilwtico index</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="split-view">
+                    <!-- Model details -->
+                    <div class="glass-panel info-panel">
+                        <h2>Predictive Engine Architecture</h2>
+                        <p class="panel-desc">Aura Forecast runs a gradient-boosted decision tree algorithm optimized for time-series regressions.</p>
+                        
+                        <div class="engine-spec">
+                            <div class="spec-row">
+                                <span class="spec-lbl">Algorithm</span>
+                                <span class="spec-val badge blue">LightGBM Regressor</span>
+                            </div>
+                            <div class="spec-row">
+                                <span class="spec-lbl">Lag Durations</span>
+                                <span class="spec-val font-mono">1, 7, 14, 28 Days</span>
+                            </div>
+                            <div class="spec-row">
+                                <span class="spec-lbl">Rolling Windows</span>
+                                <span class="spec-val font-mono">7, 14, 30 Days (Mean, Std, Max, Min)</span>
+                            </div>
+                            <div class="spec-row">
+                                <span class="spec-lbl">External Features</span>
+                                <span class="spec-val">Oil Price, Holidays, Store Cluster, Promotions</span>
+                            </div>
+                        </div>
+                        
+                        <div class="alert-box note">
+                            <strong>Did you know?</strong> Demand forecasting is highly sensitive to rolling sales averages. A drop in oil prices affects national consumer transactions, which are factored in in real time.
+                        </div>
+                    </div>
+                    
+                    <!-- Quick demo store combo suggestions -->
+                    <div class="glass-panel suggested-panel">
+                        <h2>Sample Target Combinations</h2>
+                        <p class="panel-desc">Click a combo to load it directly into the forecaster inputs.</p>
+                        
+                        <div class="suggested-combos" id="suggestion-container">
+                            <div class="combo-pill" data-store="1" data-item="211999" data-date="2017-08-15">
+                                <span class="pill-title">Store 1 (Quito) • Item 211999</span>
+                                <span class="pill-subtitle">Beverages • Class 1101</span>
+                            </div>
+                            <div class="combo-pill" data-store="44" data-item="315178" data-date="2017-08-14">
+                                <span class="pill-title">Store 44 (Quito) • Item 315178</span>
+                                <span class="pill-subtitle">Grocery • Class 1616</span>
+                            </div>
+                            <div class="combo-pill" data-store="3" data-item="426155" data-date="2017-08-15">
+                                <span class="pill-title">Store 3 (Quito) • Item 426155</span>
+                                <span class="pill-subtitle">Deli • Class 1515</span>
+                            </div>
+                            <div class="combo-pill" data-store="48" data-item="580929" data-date="2017-08-12">
+                                <span class="pill-title">Store 48 (Esmeraldas) • Item 580929</span>
+                                <span class="pill-subtitle">Produce • Class 1482</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- VIEW 2: Single Predictor Tab -->
+            <section class="tab-pane" id="tab-predict">
+                <div class="split-view">
+                    
+                    <!-- Prediction Form -->
+                    <div class="glass-panel form-panel">
+                        <h2>Calculate Item Demand</h2>
+                        <p class="panel-desc">Input store, item, and calendar properties to predict unit sales.</p>
+                        
+                        <form id="form-prediction" class="interactive-form">
+                            <!-- Store Number -->
+                            <div class="form-group autocomplete-container">
+                                <label for="input-store-nbr">Store Number</label>
+                                <div class="input-wrapper">
+                                    <input type="text" id="input-store-nbr" placeholder="Search store (e.g. 1 Quito)" autocomplete="off" required>
+                                    <span class="helper-text" id="store-helper">Enter a number 1 - 54</span>
+                                </div>
+                                <div class="autocomplete-list" id="store-autocomplete-list"></div>
+                            </div>
+                            
+                            <!-- Item Number -->
+                            <div class="form-group autocomplete-container">
+                                <label for="input-item-nbr">Item Number</label>
+                                <div class="input-wrapper">
+                                    <input type="text" id="input-item-nbr" placeholder="Search item (e.g. 211999 BEVERAGES)" autocomplete="off" required>
+                                    <span class="helper-text" id="item-helper">Over 1,200 unique products available</span>
+                                </div>
+                                <div class="autocomplete-list" id="item-autocomplete-list"></div>
+                            </div>
+                            
+                            <!-- Date Picker -->
+                            <div class="form-group">
+                                <label for="input-date">Target Date</label>
+                                <div class="input-wrapper">
+                                    <input type="date" id="input-date" required>
+                                    <span class="helper-text">Historical baseline ends 2017-08-15</span>
+                                </div>
+                            </div>
+                            
+                            <!-- On Promotion Toggle -->
+                            <div class="form-group toggle-group">
+                                <div class="toggle-label-wrap">
+                                    <span class="toggle-title">Item On Promotion</span>
+                                    <span class="toggle-desc">Is this item actively discounted or promoted?</span>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="input-promotion">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary" id="btn-predict-submit">
+                                <span>Evaluate Demand</span>
+                                <div class="btn-loader"></div>
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <!-- Prediction Result Panel -->
+                    <div class="glass-panel result-panel empty" id="prediction-result-panel">
+                        
+                        <!-- Empty State -->
+                        <div class="result-placeholder">
+                            <div class="radar-scan">
+                                <div class="circle"></div>
+                                <div class="line"></div>
+                            </div>
+                            <h3>Awaiting Core Inputs</h3>
+                            <p>Fill out the target configuration on the left to evaluate unit sales forecast.</p>
+                        </div>
+                        
+                        <!-- Populated State -->
+                        <div class="result-display hide">
+                            <div class="result-summary">
+                                <h4>PROPOSED DEMAND</h4>
+                                <div class="predicted-value-wrap">
+                                    <span class="predicted-val" id="txt-predicted-sales">0.00</span>
+                                    <span class="predicted-unit">units</span>
+                                </div>
+                            </div>
+                            
+                            <div class="grid-details">
+                                <div class="detail-card">
+                                    <h5>Store Profile</h5>
+                                    <div class="detail-item"><strong>Location:</strong> <span id="txt-res-store-loc">Quito, Pichincha</span></div>
+                                    <div class="detail-item"><strong>Store Type:</strong> <span id="txt-res-store-type">D (Cluster 13)</span></div>
+                                </div>
+                                
+                                <div class="detail-card">
+                                    <h5>Item Profile</h5>
+                                    <div class="detail-item"><strong>Family:</strong> <span id="txt-res-item-fam">BEVERAGES</span></div>
+                                    <div class="detail-item"><strong>Class ID:</strong> <span id="txt-res-item-class">1101</span></div>
+                                </div>
+                                
+                                <div class="detail-card">
+                                    <h5>Calendar Factors</h5>
+                                    <div class="detail-item"><strong>Day:</strong> <span id="txt-res-date-day">Tuesday</span></div>
+                                    <div class="detail-item"><strong>Event:</strong> <span id="txt-res-date-holiday">No Holiday</span></div>
+                                </div>
+                                
+                                <div class="detail-card">
+                                    <h5>Context Info</h5>
+                                    <div class="detail-item"><strong>Oil Price:</strong> <span id="txt-res-oil-price">$47.50</span></div>
+                                    <div class="detail-item"><strong>Promo Active:</strong> <span id="txt-res-promo">No</span></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Features Accordion -->
+                            <div class="features-accordion">
+                                <button class="accordion-header" id="btn-toggle-features">
+                                    <span>Inspect Engine Features</span>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                </button>
+                                <div class="accordion-body hide" id="features-accordion-body">
+                                    <div class="feature-metrics">
+                                        <div class="metric-row"><strong>Lag 1 Day Sales:</strong> <span id="feat-lag1">15.0</span></div>
+                                        <div class="metric-row"><strong>Lag 7 Days Sales:</strong> <span id="feat-lag7">12.0</span></div>
+                                        <div class="metric-row"><strong>Rolling 7d Mean:</strong> <span id="feat-roll-mean">14.2</span></div>
+                                        <div class="metric-row"><strong>Rolling 30d Mean:</strong> <span id="feat-roll-mean30">13.8</span></div>
+                                        <div class="metric-row"><strong>Oil 2d Diff:</strong> <span id="feat-oil-diff">-0.24</span></div>
+                                        <div class="metric-row"><strong>Is Weekend:</strong> <span id="feat-weekend">0</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- VIEW 3: Trend Analysis Tab -->
+            <section class="tab-pane" id="tab-trend">
+                <div class="trend-layout">
+                    <!-- Control panel -->
+                    <div class="glass-panel controls-horizontal">
+                        <form id="form-trend" class="inline-form">
+                            <!-- Store Number -->
+                            <div class="form-group autocomplete-container">
+                                <label for="input-trend-store">Store Number</label>
+                                <input type="text" id="input-trend-store" placeholder="Search store..." autocomplete="off" required>
+                                <div class="autocomplete-list" id="trend-store-autocomplete-list"></div>
+                            </div>
+                            
+                            <!-- Item Number -->
+                            <div class="form-group autocomplete-container">
+                                <label for="input-trend-item">Item Number</label>
+                                <input type="text" id="input-trend-item" placeholder="Search item..." autocomplete="off" required>
+                                <div class="autocomplete-list" id="trend-item-autocomplete-list"></div>
+                            </div>
+                            
+                            <!-- Date Picker -->
+                            <div class="form-group">
+                                <label for="input-trend-date">Forecast Start Date</label>
+                                <input type="date" id="input-trend-date" required>
+                            </div>
+                            
+                            <!-- On Promotion Toggle -->
+                            <div class="form-group inline-toggle">
+                                <label class="switch small">
+                                    <input type="checkbox" id="input-trend-promo">
+                                    <span class="slider round"></span>
+                                </label>
+                                <span class="toggle-lbl">Promo Active</span>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary" id="btn-trend-submit">
+                                <span>Generate Trend</span>
+                                <div class="btn-loader"></div>
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <!-- Chart panel -->
+                    <div class="glass-panel chart-panel">
+                        <div class="chart-header">
+                            <div>
+                                <h3 id="txt-chart-title">Demand Forecast vs History</h3>
+                                <p id="txt-chart-subtitle">Select a target combination to visualize demand trends.</p>
+                            </div>
+                            <div class="chart-legend-custom">
+                                <span class="legend-dot hist"></span> Historical Sales
+                                <span class="legend-dot fore"></span> Forecasted Sales
+                            </div>
+                        </div>
+                        
+                        <div class="chart-container-inner">
+                            <canvas id="forecastChart" height="120"></canvas>
+                        </div>
+                        
+                        <!-- Timeline grid display -->
+                        <div class="timeline-cards-wrap hide" id="timeline-results-wrap">
+                            <h4>DAILY DEMAND DETAIL</h4>
+                            <div class="timeline-grid" id="timeline-cards-grid">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+        </main>
+    </div>
+    
+    <!-- Custom JS -->
+    <script src="/static/app.js"></script>
+</body>
+</html>
