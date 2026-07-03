@@ -272,6 +272,9 @@ document.addEventListener("DOMContentLoaded", () => {
             (store) => {
                 state.selectedSingleStore = store;
                 elements.inputSingleStore.value = `${store.store_nbr} - ${store.city}, ${store.state}`;
+            },
+            () => {
+                state.selectedSingleStore = null;
             }
         );
 
@@ -285,6 +288,9 @@ document.addEventListener("DOMContentLoaded", () => {
             (item) => {
                 state.selectedSingleItem = item;
                 elements.inputSingleItem.value = `${item.item_nbr} - ${item.family}`;
+            },
+            () => {
+                state.selectedSingleItem = null;
             }
         );
 
@@ -298,6 +304,9 @@ document.addEventListener("DOMContentLoaded", () => {
             (store) => {
                 state.selectedTrendStore = store;
                 elements.inputTrendStore.value = `${store.store_nbr} - ${store.city}, ${store.state}`;
+            },
+            () => {
+                state.selectedTrendStore = null;
             }
         );
 
@@ -311,12 +320,16 @@ document.addEventListener("DOMContentLoaded", () => {
             (item) => {
                 state.selectedTrendItem = item;
                 elements.inputTrendItem.value = `${item.item_nbr} - ${item.family}`;
+            },
+            () => {
+                state.selectedTrendItem = null;
             }
         );
     }
 
-    function setupSearchAutocomplete(inputEl, listEl, dataSrc, getTitle, getSubtitle, onSelect) {
+    function setupSearchAutocomplete(inputEl, listEl, dataSrc, getTitle, getSubtitle, onSelect, onInput) {
         inputEl.addEventListener("input", () => {
+            if (onInput) onInput();
             const query = inputEl.value.trim().toLowerCase();
             listEl.innerHTML = "";
             
@@ -396,7 +409,7 @@ document.addEventListener("DOMContentLoaded", () => {
     async function triggerSinglePredictSubmit() {
         if (!state.selectedSingleStore) {
             // Check if input value matches directly (user typed exact number)
-            const typedVal = elements.inputSingleStore.value.split(" ")[0];
+            const typedVal = elements.inputSingleStore.value.trim().split(" ")[0];
             const foundStore = state.stores.find(s => s.store_nbr.toString() === typedVal);
             if (foundStore) state.selectedSingleStore = foundStore;
             else {
@@ -406,7 +419,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         
         if (!state.selectedSingleItem) {
-            const typedVal = elements.inputSingleItem.value.split(" ")[0];
+            const typedVal = elements.inputSingleItem.value.trim().split(" ")[0];
             const foundItem = state.items.find(i => i.item_nbr.toString() === typedVal);
             if (foundItem) state.selectedSingleItem = foundItem;
             else {
@@ -523,7 +536,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function triggerTrendForecastSubmit() {
         if (!state.selectedTrendStore) {
-            const typedVal = elements.inputTrendStore.value.split(" ")[0];
+            const typedVal = elements.inputTrendStore.value.trim().split(" ")[0];
             const foundStore = state.stores.find(s => s.store_nbr.toString() === typedVal);
             if (foundStore) state.selectedTrendStore = foundStore;
             else {
@@ -533,7 +546,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         
         if (!state.selectedTrendItem) {
-            const typedVal = elements.inputTrendItem.value.split(" ")[0];
+            const typedVal = elements.inputTrendItem.value.trim().split(" ")[0];
             const foundItem = state.items.find(i => i.item_nbr.toString() === typedVal);
             if (foundItem) state.selectedTrendItem = foundItem;
             else {
