@@ -10,7 +10,7 @@ The system predicts daily **unit sales** for a given `(store_nbr, item_nbr, date
 
 | Metric | Value |
 |--------|-------|
-| RMSE   | 8.32840 |
+| RMSE   | 0.832840 |
 | MAE    | 0.432976 |
 | R²     | 0.89 |
 
